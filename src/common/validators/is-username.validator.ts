@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ async: false })
-export class IsUsernameValidConstraint implements ValidatorConstraintInterface {
+export class IsUsernameConstraint implements ValidatorConstraintInterface {
   validate(username: string, args: ValidationArguments) {
     return /^[a-zA-Z0-9]+$/.test(username);
   }
@@ -17,16 +17,16 @@ export class IsUsernameValidConstraint implements ValidatorConstraintInterface {
   }
 }
 
-function IsUsernameValid(validationOptions?: ValidationOptions) {
+function IsUsername(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],
-      validator: IsUsernameValidConstraint
+      validator: IsUsernameConstraint
     });
   };
 }
 
-export default IsUsernameValid;
+export default IsUsername;

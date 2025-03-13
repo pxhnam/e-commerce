@@ -14,6 +14,7 @@ import ProductModule from '@modules/product/product.module';
 import UserAddressModule from '@modules/user-address/user-address.module';
 import CartModule from '@modules/cart/cart.module';
 import TokenModule from '@modules/token/token.module';
+import { IsExistsConstraint, IsUniqueConstraint } from '@common/validators';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import TokenModule from '@modules/token/token.module';
     UserAddressModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService, IsUniqueConstraint, IsExistsConstraint]
 })
 export class AppModule {}

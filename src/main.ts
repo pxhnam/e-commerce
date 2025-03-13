@@ -10,8 +10,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.use(cookieParser());
   const configService = app.get(ConfigService);
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(new CustomValidationPipe());
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const PORT = configService.get<number>('PORT', 3000);
   await app.listen(PORT);
 }
