@@ -12,7 +12,7 @@ import LocalAuthGuard from './guards/local-auth.guard';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import RefreshTokenGuard from './guards/refresh-token.guard';
 import { Request } from 'express';
-import { User } from '@entities';
+import { User } from '@modules/database/entities';
 import { JwtPayload } from '@common/interfaces';
 
 @Controller('auth')

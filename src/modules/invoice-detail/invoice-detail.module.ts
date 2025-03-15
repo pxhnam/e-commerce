@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import InvoiceDetailController from './invoice-detail.controller';
 import InvoiceDetailService from './invoice-detail.service';
-import { InvoiceDetail } from '@entities';
+import { InvoiceDetail } from '@modules/database/entities';
 
 @Module({
   imports: [TypeOrmModule.forFeature([InvoiceDetail])],

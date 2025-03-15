@@ -2,8 +2,8 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import BaseEntity from './base.entity';
 import Product from './product.entity';
 
-@Entity('brands')
-class Brand extends BaseEntity {
+@Entity('categories')
+class Category extends BaseEntity {
   @Column({ type: 'varchar', unique: true })
   name: string;
 
@@ -13,11 +13,11 @@ class Brand extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   image: string;
 
-  @OneToMany(() => Product, (product) => product.brand)
+  @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 }
 
-export default Brand;
+export default Category;

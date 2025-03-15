@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createHash } from 'crypto';
-import { Token } from '@entities';
+import { Token } from '@modules/database/entities';
 
 @Injectable()
 class TokenService {

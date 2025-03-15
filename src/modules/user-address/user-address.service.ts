@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserAddress } from '@entities';
+import { UserAddress } from '@modules/database/entities';
 
 @Injectable()
 class UserAddressService {

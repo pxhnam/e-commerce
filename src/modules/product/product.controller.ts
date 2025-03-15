@@ -27,7 +27,7 @@ class ProductController {
 
   @Post()
   create(@Body() body: CreateProductDto) {
-    return this.productService.create(body);
+    return this.productService.insert(body);
   }
 }
 

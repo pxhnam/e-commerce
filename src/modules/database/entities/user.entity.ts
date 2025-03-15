@@ -9,6 +9,9 @@ import Token from './token.entity';
 
 @Entity('users')
 class User extends BaseEntity {
+  @Column({ type: 'varchar', nullable: true })
+  avatar: string;
+
   @Column({ type: 'varchar', length: 50, unique: true })
   username: string;
 

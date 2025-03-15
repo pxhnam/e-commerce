@@ -1,6 +1,6 @@
 import { JwtPayload } from '@common/interfaces';
-import AppConfigService from '@config/config.service';
-import { User } from '@entities';
+import AppConfigService from '@modules/config/config.service';
+import { User } from '@modules/database/entities';
 import UserService from '@modules/user/user.service';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';

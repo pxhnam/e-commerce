@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { ProductStatus } from '@common/enums';
 import { Type } from 'class-transformer';
-import { IsExists } from '@common/validators';
+import { IsExists, IsUnique } from '@common/validators';
 
 class CreateProductDto {
   @IsNotEmpty()
@@ -17,6 +17,7 @@ class CreateProductDto {
 
   @IsOptional()
   @IsString()
+  @IsUnique({ table: 'products', column: 'slug' })
   slug: string;
 
   @IsNotEmpty()

@@ -20,14 +20,19 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
 
   async validate(value: unknown, args: ValidationArguments): Promise<boolean> {
     const { table, column } = args.constraints[0] as TIsUnique;
+    const id = args.object['id'] as string;
 
-    const exists = await this.entityManager
+    const query = this.entityManager
       .getRepository(table)
       .createQueryBuilder(table)
       .withDeleted()
-      .where({ [column]: value })
-      .getExists();
+      .where({ [column]: value });
 
+    if (id) {
+      query.andWhere(`${table}.id != :id`, { id });
+    }
+
+    const exists = await query.getExists();
     return !exists;
   }
 

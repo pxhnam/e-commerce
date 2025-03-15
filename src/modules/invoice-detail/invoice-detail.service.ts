@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InvoiceDetail } from '@entities';
+import { InvoiceDetail } from '@modules/database/entities';
 
 @Injectable()
 class InvoiceDetailService {

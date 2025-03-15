@@ -18,7 +18,7 @@ class UserController {
 
   @Get()
   index() {
-    return this.userService.find();
+    return this.userService.paginate();
   }
 
   @Get(':id')
@@ -30,17 +30,17 @@ class UserController {
 
   @Post()
   create(@Body() body: CreateUserDto) {
-    return this.userService.create(body);
+    return this.userService.insert(body);
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return this.userService.update(id, body);
+    return this.userService.edit(id, body);
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
-    return this.userService.delete(id);
+    return this.userService.softDelete(id);
   }
 }
 
