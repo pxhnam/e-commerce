@@ -1,13 +1,18 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
-  Post
+  Post,
+  Put,
+  UploadedFiles
 } from '@nestjs/common';
 import ProductService from './product.service';
 import CreateProductDto from './dto/create-product.dto';
+import UploadFiles from '@common/decorators/upload-files.decorator';
 
 @Controller('products')
 class ProductController {
@@ -26,8 +31,26 @@ class ProductController {
   }
 
   @Post()
-  create(@Body() body: CreateProductDto) {
-    return this.productService.insert(body);
+  @UploadFiles()
+  create(
+    @Body() data: CreateProductDto,
+    @UploadedFiles() files: Express.Multer.File[]
+  ) {
+    if (!files || files.length < 1)
+      throw new BadRequestException('No files uploaded');
+    return this.productService.create(data, files);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() body: CreateProductDto) {
+    return this.productService.add(body);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    const product = await this.productService.findById(id);
+    if (!product) throw new NotFoundException('Category not found');
+    return this.productService.softDelete(id);
   }
 }
 

@@ -30,7 +30,7 @@ class UserController {
 
   @Post()
   create(@Body() body: CreateUserDto) {
-    return this.userService.insert(body);
+    return this.userService.add(body);
   }
 
   @Put(':id')

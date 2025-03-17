@@ -6,7 +6,8 @@ import {
   ObjectLiteral,
   FindOneOptions,
   FindManyOptions,
-  In
+  In,
+  DeleteResult
 } from 'typeorm';
 
 @Injectable()
@@ -64,7 +65,7 @@ class BaseService<T extends ObjectLiteral> {
     return count > 0;
   }
 
-  insert(data: DeepPartial<T>): Promise<T> {
+  add(data: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(data);
     return this.repository.save(entity);
   }
@@ -82,11 +83,38 @@ class BaseService<T extends ObjectLiteral> {
     return result.affected !== undefined && result.affected > 0;
   }
 
+  async delete(id: string): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return this.statusDelete(result);
+  }
+
+  async deleteMany(ids: string[]): Promise<boolean> {
+    const result = await this.repository.delete(ids);
+    return this.statusDelete(result);
+  }
+
+  async deleteBy(where: FindOptionsWhere<T>): Promise<boolean> {
+    const result = await this.repository.delete(where);
+    return this.statusDelete(result);
+  }
+
   async softDelete(id: string): Promise<boolean> {
-    const result = await this.repository.softDelete({
-      id
-    } as unknown as FindOptionsWhere<T>);
-    return result.affected !== undefined && result.affected > 0;
+    const result = await this.repository.softDelete(id);
+    return this.statusDelete(result);
+  }
+
+  async softDeleteMany(ids: string[]): Promise<boolean> {
+    const result = await this.repository.softDelete(ids);
+    return this.statusDelete(result);
+  }
+
+  async softDeleteBy(where: FindOptionsWhere<T>): Promise<boolean> {
+    const result = await this.repository.softDelete(where);
+    return this.statusDelete(result);
+  }
+
+  private statusDelete(result: DeleteResult): boolean {
+    return !!(result?.affected && result.affected > 0);
   }
 }
 

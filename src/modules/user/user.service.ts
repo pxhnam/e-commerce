@@ -17,7 +17,7 @@ class UserService extends BaseService<User> {
     return this.userRepository.findOneBy({ username });
   }
 
-  async findWithSensitive(identifier: string | number): Promise<User | null> {
+  findWithSensitive(identifier: string | number): Promise<User | null> {
     return this.userRepository
       .createQueryBuilder('user')
       .where('user.id = :identifier OR user.username = :identifier', {

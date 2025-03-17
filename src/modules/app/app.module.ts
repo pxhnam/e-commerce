@@ -7,7 +7,6 @@ import UserModule from '@modules/user/user.module';
 import AuthModule from '@modules/auth/auth.module';
 import CategoryModule from '@modules/category/category.module';
 import BrandModule from '@modules/brand/brand.module';
-import ImageModule from '@modules/image/image.module';
 import InvoiceModule from '@modules/invoice/invoice.module';
 import InvoiceDetailModule from '@modules/invoice-detail/invoice-detail.module';
 import ProductModule from '@modules/product/product.module';
@@ -28,7 +27,6 @@ import CloudinaryModule from '@modules/cloudinary/cloudinary.module';
     ProductModule,
     CategoryModule,
     BrandModule,
-    ImageModule,
     CartModule,
     InvoiceModule,
     InvoiceDetailModule,

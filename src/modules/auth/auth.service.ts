@@ -45,13 +45,13 @@ class AuthService {
   }
 
   handlePayload(payload: Record<string, any>) {
-    delete payload.exp;
-    delete payload.iat;
+    delete payload['exp'];
+    delete payload['iat'];
     return payload;
   }
 
   async signOut(token: string) {
-    return await this.tokenService.delete(token);
+    return await this.tokenService.softDeleteByToken(token);
   }
 }
 

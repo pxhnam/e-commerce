@@ -23,11 +23,11 @@ class CategoryService extends BaseService<Category> {
   async create(
     data: Partial<Category>,
     file: Express.Multer.File
-  ): Promise<Category> {
+  ): Promise<Category | null> {
     data['slug'] = generateSlug(data['name'] as string);
     const { public_id } = await this.cloudinaryService.uploadFile(file);
     data['image'] = public_id;
-    return super.insert(data);
+    return this.add(data);
   }
 
   async update(
@@ -42,7 +42,7 @@ class CategoryService extends BaseService<Category> {
       const { public_id } = await this.cloudinaryService.uploadFile(file);
       data['image'] = public_id;
     }
-    return await super.edit(id, data);
+    return this.edit(id, data);
   }
 }
 

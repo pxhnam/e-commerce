@@ -1,6 +1,4 @@
 import {
-  IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -9,29 +7,31 @@ import {
   IsUUID
 } from 'class-validator';
 import { ProductStatus } from '@common/enums';
-import { Transform, Type } from 'class-transformer';
-import { IsExists } from '@common/validators';
-import { Logger } from '@nestjs/common';
+import { Type } from 'class-transformer';
+import { IsExists, IsUnique } from '@common/validators';
 
-export class ImageOptions {
-  @IsOptional()
-  @IsBoolean()
-  isDefault?: boolean;
-}
-
-class CreateProductDto {
+class UpdateProductDto {
   @IsNotEmpty()
+  @IsUUID()
+  @IsExists({ table: 'products', column: 'id' })
+  id: string;
+
+  @IsOptional()
   @IsString()
+  @IsUnique({ table: 'products', column: 'name' })
   name: string;
 
   @IsNotEmpty()
   @IsString()
+  @IsOptional()
   shortDescription: string;
 
   @IsNotEmpty()
   @IsString()
+  @IsOptional()
   description: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
@@ -43,19 +43,23 @@ class CreateProductDto {
   discountPrice: number;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
   stock: number;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
   sold: number;
 
+  @IsOptional()
   @IsUUID()
   @IsExists({ table: 'categories' })
   categoryId: string;
 
+  @IsOptional()
   @IsUUID()
   @IsExists({ table: 'brands' })
   brandId: string;
@@ -63,18 +67,6 @@ class CreateProductDto {
   @IsOptional()
   @IsEnum(ProductStatus)
   status: ProductStatus;
-
-  @IsOptional()
-  @IsArray()
-  @Transform(({ value }) => {
-    try {
-      return typeof value === 'string' ? JSON.parse(value) : value;
-    } catch (e) {
-      Logger.error(e);
-      return [];
-    }
-  })
-  imageOptions: ImageOptions[];
 }
 
-export default CreateProductDto;
+export default UpdateProductDto;

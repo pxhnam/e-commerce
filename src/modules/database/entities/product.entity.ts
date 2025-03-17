@@ -7,7 +7,7 @@ import { ProductStatus } from '@common/enums';
 
 @Entity('products')
 class Product extends BaseEntity {
-  @Column()
+  @Column({ type: 'varchar', unique: true })
   name: string;
 
   @Column({ type: 'varchar', unique: true })

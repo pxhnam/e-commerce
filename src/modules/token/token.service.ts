@@ -3,42 +3,30 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createHash } from 'crypto';
 import { Token } from '@modules/database/entities';
+import BaseService from '@modules/base/base.service';
 
 @Injectable()
-class TokenService {
+class TokenService extends BaseService<Token> {
   constructor(
     @InjectRepository(Token)
     private readonly tokenRepository: Repository<Token>
-  ) {}
-
-  find(): Promise<Token[]> {
-    return this.tokenRepository.find();
+  ) {
+    super(tokenRepository);
   }
 
-  async create(userId: string, token: string): Promise<Token> {
+  create(userId: string, token: string): Promise<Token> {
     const hashedToken = createHash('sha256').update(token).digest('hex');
-    const createToken = this.tokenRepository.create({
-      user: { id: userId },
-      token: hashedToken
-    });
-    return await this.tokenRepository.save(createToken);
+    return this.add({ user: { id: userId }, token: hashedToken });
   }
 
-  async compare(userId: string, token: string): Promise<boolean> {
+  compare(userId: string, token: string): Promise<boolean> {
     const hashedToken = createHash('sha256').update(token).digest('hex');
-    const tokenCount = await this.tokenRepository.count({
-      where: {
-        user: { id: userId },
-        token: hashedToken
-      }
-    });
-    return tokenCount > 0;
+    return this.exists({ user: { id: userId }, token: hashedToken });
   }
 
-  async delete(token: string): Promise<boolean> {
+  async softDeleteByToken(token: string): Promise<boolean> {
     const hashedToken = createHash('sha256').update(token).digest('hex');
-    const result = await this.tokenRepository.delete({ token: hashedToken });
-    return !!(result?.affected && result.affected > 0);
+    return this.softDeleteBy({ token: hashedToken });
   }
 }
 

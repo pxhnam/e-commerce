@@ -1,16 +1,16 @@
 import { IsExists, IsUnique } from '@common/validators';
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-class UpdateCategoryDto {
+class UpdateBrandDto {
   @IsNotEmpty()
   @IsUUID()
-  @IsExists({ table: 'categories', column: 'id' })
+  @IsExists({ table: 'brands', column: 'id' })
   id: string;
 
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @IsUnique({ table: 'categories', column: 'name' })
+  @IsUnique({ table: 'brands', column: 'name' })
   name: string;
 
   @IsOptional()
@@ -18,4 +18,4 @@ class UpdateCategoryDto {
   description: string;
 }
 
-export default UpdateCategoryDto;
+export default UpdateBrandDto;
