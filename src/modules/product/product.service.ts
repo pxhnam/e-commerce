@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from '@modules/database/entities';
+import { Image, Product } from '@modules/database/entities';
 import BaseService from '@modules/base/base.service';
-import ImageService from '@modules/image/image.service';
 import CloudinaryService from '@modules/cloudinary/cloudinary.service';
 import { generateSlug } from '@common/utils';
 import { ImageOptions } from './dto/create-product.dto';
@@ -13,7 +12,8 @@ class ProductService extends BaseService<Product> {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    private readonly imageService: ImageService,
+    @InjectRepository(Image)
+    private readonly imageRepository: Repository<Image>,
     private readonly cloudinaryService: CloudinaryService
   ) {
     super(productRepository);
@@ -23,7 +23,10 @@ class ProductService extends BaseService<Product> {
     return this.productRepository.findOneBy({ slug });
   }
 
-  async create(data: Partial<Product>, files: Express.Multer.File[]) {
+  async create(
+    data: Partial<Product>,
+    files: Express.Multer.File[]
+  ): Promise<Product | null> {
     const product = await this.add({
       ...data,
       slug: generateSlug(data['name'] as string),
@@ -34,12 +37,12 @@ class ProductService extends BaseService<Product> {
     await Promise.all(
       files.map(async (file, index) => {
         const { public_id } = await this.cloudinaryService.uploadFile(file);
-
-        return await this.imageService.add({
+        const image = this.imageRepository.create({
           url: public_id,
           product,
           isDefault: imageOptions[index]?.isDefault
         });
+        await this.imageRepository.save(image);
       })
     );
     return this.productRepository.findOne({
