@@ -13,6 +13,7 @@ import {
 import ProductService from './product.service';
 import CreateProductDto from './dto/create-product.dto';
 import UploadFiles from '@common/decorators/upload-files.decorator';
+import UpdateProductDto from './dto/update-product.dto';
 
 @Controller('products')
 class ProductController {
@@ -20,7 +21,7 @@ class ProductController {
 
   @Get()
   index() {
-    return this.productService.find();
+    return this.productService.findAll();
   }
 
   @Get(':slug')
@@ -42,15 +43,23 @@ class ProductController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: CreateProductDto) {
-    return this.productService.add(body);
+  @UploadFiles()
+  async update(
+    @Param('id') id: string,
+    @Body() data: UpdateProductDto,
+    @UploadedFiles() files?: Express.Multer.File[]
+  ) {
+    const product = await this.productService.findById(id);
+    if (!product) throw new NotFoundException('Product not found');
+    if (data.id !== product.id) throw new BadRequestException('Invalid ID');
+    return this.productService.update(product.id, data, files);
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
     const product = await this.productService.findById(id);
     if (!product) throw new NotFoundException('Category not found');
-    return this.productService.softDelete(id);
+    return this.productService.delete(id);
   }
 }
 

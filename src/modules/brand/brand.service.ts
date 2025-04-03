@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Brand, Category } from '@modules/database/entities';
+import { generateSlug } from '@common/utils';
 import BaseService from '@modules/base/base.service';
 import CloudinaryService from '@modules/cloudinary/cloudinary.service';
-import { generateSlug } from '@common/utils';
+import { Brand, Category } from '@modules/database/entities';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 class BrandService extends BaseService<Brand> {
@@ -22,19 +22,20 @@ class BrandService extends BaseService<Brand> {
 
   async create(
     data: Partial<Category>,
-    file: Express.Multer.File
-  ): Promise<Category | null> {
+    file?: Express.Multer.File
+  ): Promise<Category> {
+    if (!file) throw new BadRequestException('No file uploaded');
     data['slug'] = generateSlug(data['name'] as string);
     const { public_id } = await this.cloudinaryService.uploadFile(file);
     data['image'] = public_id;
-    return this.add(data);
+    return this.create(data);
   }
 
   async update(
     id: string,
     data: Partial<Category>,
     file?: Express.Multer.File
-  ): Promise<Category | null> {
+  ): Promise<Category> {
     if ('name' in data && data['name']) {
       data['slug'] = generateSlug(data['name']);
     }
@@ -42,7 +43,7 @@ class BrandService extends BaseService<Brand> {
       const { public_id } = await this.cloudinaryService.uploadFile(file);
       data['image'] = public_id;
     }
-    return await this.edit(id, data);
+    return await this.update(id, data);
   }
 }
 

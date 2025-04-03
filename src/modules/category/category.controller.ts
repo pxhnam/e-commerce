@@ -1,3 +1,4 @@
+import UploadFile from '@common/decorators/upload-file.decorator';
 import {
   BadRequestException,
   Body,
@@ -12,7 +13,6 @@ import {
 } from '@nestjs/common';
 import CategoryService from './category.service';
 import CreateCategoryDto from './dto/create-category.dto';
-import UploadFile from '@common/decorators/upload-file.decorator';
 import UpdateCategoryDto from './dto/update-category.dto';
 
 @Controller('categories')
@@ -37,7 +37,6 @@ class CategoryController {
     @Body() data: CreateCategoryDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    if (!file) throw new BadRequestException('No file uploaded');
     return this.categoryService.create(data, file);
   }
 

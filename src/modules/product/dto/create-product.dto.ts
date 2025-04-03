@@ -1,6 +1,5 @@
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -12,12 +11,7 @@ import { ProductStatus } from '@common/enums';
 import { Transform, Type } from 'class-transformer';
 import { IsExists } from '@common/validators';
 import { Logger } from '@nestjs/common';
-
-export class ImageOptions {
-  @IsOptional()
-  @IsBoolean()
-  isDefault?: boolean;
-}
+import ImageOptions from './image-options.dto';
 
 class CreateProductDto {
   @IsNotEmpty()
@@ -66,7 +60,7 @@ class CreateProductDto {
 
   @IsOptional()
   @IsArray()
-  @Transform(({ value }) => {
+  @Transform(({ value }): ImageOptions[] => {
     try {
       return typeof value === 'string' ? JSON.parse(value) : value;
     } catch (e) {

@@ -6,6 +6,7 @@ import Invoice from './invoice.entity';
 import UserAddress from './user-address.entity';
 import Cart from './cart.entity';
 import Token from './token.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 class User extends BaseEntity {
@@ -15,7 +16,8 @@ class User extends BaseEntity {
   @Column({ type: 'varchar', length: 50, unique: true })
   username: string;
 
-  @Column({ type: 'varchar', select: false })
+  @Column({ type: 'varchar' })
+  @Exclude()
   password: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })

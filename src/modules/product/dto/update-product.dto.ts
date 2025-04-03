@@ -17,6 +17,7 @@ class UpdateProductDto {
   id: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @IsUnique({ table: 'products', column: 'name' })
   name: string;
@@ -38,6 +39,7 @@ class UpdateProductDto {
   price: number;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
   discountPrice: number;

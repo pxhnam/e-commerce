@@ -1,39 +1,45 @@
+import CurrentUser from '@common/decorators/current-user.decorator';
 import {
+  JwtPayload,
+  RequestWithCookies,
+  RequestWithUser
+} from '@common/interfaces';
+import { User } from '@modules/database/entities';
+import {
+  ClassSerializerInterceptor,
   Controller,
   Get,
-  HttpCode,
   Post,
   Req,
-  UnauthorizedException,
-  UseGuards
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
-import AuthService from './auth.service';
-import LocalAuthGuard from './guards/local-auth.guard';
-import JwtAuthGuard from './guards/jwt-auth.guard';
-import RefreshTokenGuard from './guards/refresh-token.guard';
 import { Request } from 'express';
-import { User } from '@modules/database/entities';
-import { JwtPayload } from '@common/interfaces';
+import AuthService from './auth.service';
+import JwtAuthGuard from './guards/jwt-auth.guard';
+import LocalAuthGuard from './guards/local-auth.guard';
+import RefreshTokenGuard from './guards/refresh-token.guard';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('sign-up')
   signUp() {
-    return 'Sign Up';
+    return this.authService.signUp();
   }
 
   @Post('sign-in')
   @UseGuards(LocalAuthGuard)
-  signIn(@Req() request: Request) {
-    return this.authService.signIn(request.user as User);
+  signIn(@Req() request: RequestWithUser) {
+    return this.authService.signIn(request.user);
   }
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  profile(@Req() request: Request) {
-    return request.user;
+  profile(@CurrentUser() user: User) {
+    return user;
   }
 
   @Post('refresh-token')
@@ -45,13 +51,9 @@ class AuthController {
   }
 
   @Post('sign-out')
-  @HttpCode(200)
-  async signOut(@Req() request: Request) {
+  signOut(@Req() request: RequestWithCookies) {
     const { _token } = request.cookies;
-    if (typeof _token !== 'string') throw new UnauthorizedException();
-    const isDeleted = await this.authService.signOut(_token);
-    if (!isDeleted) throw new UnauthorizedException();
-    return { message: 'Sign out successful' };
+    return this.authService.signOut(_token);
   }
 }
 

@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
-  Repository,
-  FindOptionsWhere,
   DeepPartial,
-  ObjectLiteral,
-  FindOneOptions,
+  DeleteResult,
   FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
   In,
-  DeleteResult
+  ObjectLiteral,
+  Repository
 } from 'typeorm';
 
 @Injectable()
@@ -44,8 +44,12 @@ class BaseService<T extends ObjectLiteral> {
     } as unknown as FindOptionsWhere<T>);
   }
 
-  findById(id: string): Promise<T | null> {
-    return this.repository.findOneBy({ id } as unknown as FindOptionsWhere<T>);
+  async findById(id: string): Promise<T> {
+    const entity = await this.repository.findOneBy({
+      id
+    } as unknown as FindOptionsWhere<T>);
+    if (!entity) throw new NotFoundException();
+    return entity;
   }
 
   findOne(options: FindOneOptions<T>): Promise<T | null> {
@@ -65,15 +69,16 @@ class BaseService<T extends ObjectLiteral> {
     return count > 0;
   }
 
-  add(data: DeepPartial<T>): Promise<T> {
+  create(data: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(data);
     return this.repository.save(entity);
   }
 
-  async edit(id: string, data: Partial<T>): Promise<T | null> {
+  async update(id: string, data: Partial<T>): Promise<T> {
+    const entity = await this.findById(id);
     delete data['id'];
-    await this.repository.update(id, data);
-    return this.findById(id);
+    Object.assign(entity, data);
+    return await this.repository.save(entity);
   }
 
   async restore(id: string): Promise<boolean> {
