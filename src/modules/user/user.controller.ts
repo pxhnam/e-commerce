@@ -18,7 +18,7 @@ class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('')
-  @Roles(Role.USER, Role.ADMIN)
+  @Roles(Role.ADMIN)
   index() {
     return this.userService.findAll();
   }

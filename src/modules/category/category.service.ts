@@ -28,7 +28,7 @@ class CategoryService extends BaseService<Category> {
     data['slug'] = generateSlug(data['name'] as string);
     const { public_id } = await this.cloudinaryService.uploadFile(file);
     data['image'] = public_id;
-    return this.create(data);
+    return super.create(data);
   }
 
   async update(
@@ -43,7 +43,7 @@ class CategoryService extends BaseService<Category> {
       const { public_id } = await this.cloudinaryService.uploadFile(file);
       data['image'] = public_id;
     }
-    return this.update(id, data);
+    return super.update(id, data);
   }
 }
 

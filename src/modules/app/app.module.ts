@@ -1,4 +1,5 @@
 import { IsExistsConstraint, IsUniqueConstraint } from '@common/validators';
+import { LoggerMiddleware } from '@middleware';
 import AppController from '@modules/app/app.controller';
 import AppService from '@modules/app/app.service';
 import AuthModule from '@modules/auth/auth.module';
@@ -12,7 +13,12 @@ import InvoiceDetailModule from '@modules/invoice-detail/invoice-detail.module';
 import InvoiceModule from '@modules/invoice/invoice.module';
 import ProductModule from '@modules/product/product.module';
 import UserAddressModule from '@modules/user-address/user-address.module';
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod
+} from '@nestjs/common';
 
 @Module({
   imports: [
@@ -31,4 +37,10 @@ import { Module } from '@nestjs/common';
   controllers: [AppController],
   providers: [AppService, IsUniqueConstraint, IsExistsConstraint]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+  }
+}
